@@ -9,6 +9,7 @@
       <v-row align="center" justify="center">
         <v-progress-circular
           indeterminate
+          color="primary"
           size="150"
           width="2"
         ></v-progress-circular>

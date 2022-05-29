@@ -17,4 +17,5 @@
 
 .toasted-container .toasted {
   font-family: "Poppins";
+  font-size: 15px !important;
 }

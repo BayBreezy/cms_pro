@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" width="650" transition="scroll-y-transition">
     <v-card rounded="lg" class="pa-2">
       <v-card-title class="mb-7">
-        <span>{{ title }}</span>
+        <span>{{ !form._id ? "Create A New User" : "Edit User Profile" }}</span>
       </v-card-title>
       <v-card-text>
         <v-form @submit.prevent="submitData">
@@ -90,53 +90,52 @@
 <script>
 export default {
   props: {
-    title: {
-      type: String,
-      default: "Create A New User",
-    },
     user: {
       type: Object,
       default: () => {},
     },
   },
-  mounted() {
-    if (this.user) {
-      this.form = JSON.parse(JSON.stringify(this.user));
-    }
-  },
   data() {
     return {
       dialog: false,
       form: {
-        name: "",
-        email: "",
-        phone: "",
-        gender: "",
-        street: "",
-        street2: "",
-        city: "",
-        country: "",
+        name: null,
+        email: null,
+        phone: null,
+        gender: null,
+        street: null,
+        street2: null,
+        city: null,
+        country: null,
       },
     };
+  },
+  watch: {
+    user: function (val) {
+      if (val) {
+        this.form = { ...val };
+      }
+    },
   },
   methods: {
     async submitData() {
       try {
-        let isEditing = !!this.form.id;
+        let isEditing = !!this.form._id;
         if (isEditing) {
-          await this.$axios.put(`/api/customers/${this.form.id}`, this.form);
+          await this.$store.dispatch("customers/UpdateCustomer", this.form);
         } else {
-          await this.$axios.post(`/api/customers`, this.form);
+          await this.$store.dispatch("customers/CreateCustomer", this.form);
         }
         this.$toast.success(
           `${isEditing ? "Updated" : "Created"} Successfully`
         );
         this.close();
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     },
     open() {
+      if (this.user) {
+        this.form = JSON.parse(JSON.stringify(this.user));
+      }
       this.dialog = true;
     },
     close() {

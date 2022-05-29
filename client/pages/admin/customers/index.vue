@@ -13,7 +13,7 @@
             <v-icon small class="mr-3">mdi-cloud-upload-outline</v-icon>
             <span>Import</span>
           </v-btn>
-          <v-btn text color="primary">
+          <v-btn @click="exportData" text color="primary">
             <v-icon small class="mr-3">mdi-cloud-download-outline</v-icon>
             <span>Export</span>
           </v-btn>
@@ -31,15 +31,43 @@
           ></v-text-field>
         </div>
         <div class="pa-3 mt-3">
-          <v-data-table show-select :headers="headers"></v-data-table>
+          <v-data-table :items="customers" show-select :headers="headers">
+            <template #[`item.actions`]="{ item }">
+              <v-icon small class="mr-2" @click="openDialog(item)"
+                >mdi-pencil</v-icon
+              >
+              <v-icon small class="mr-2">mdi-delete</v-icon>
+            </template>
+            <!-- email slot -->
+            <template #[`item.email`]="{ item }">
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <a
+                    v-on="on"
+                    v-bind="attrs"
+                    style="
+                      text-decoration: underline dashed;
+                      text-underline-offset: 5px;
+                    "
+                    :href="`mailto:${item.email}`"
+                    >{{ item.email }}</a
+                  >
+                </template>
+                <span class="text-caption"
+                  >Send email to: {{ item.email }}</span
+                >
+              </v-tooltip>
+            </template>
+          </v-data-table>
         </div>
       </v-card>
     </v-container>
-    <CustomerDialog ref="customerDialog" />
+    <CustomerDialog :user="item" ref="customerDialog" />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   layout: "admin",
   data() {
@@ -49,17 +77,43 @@ export default {
         { text: "Name", value: "name" },
         { text: "Email", value: "email" },
         { text: "Phone", value: "phone" },
-        { text: "Address", value: "address" },
         { text: "Actions", value: "actions", sortable: false },
       ],
     };
   },
+  async asyncData({ store }) {
+    await store.dispatch("customers/GetCustomers");
+  },
+  computed: {
+    ...mapState({
+      customers: (state) => state.customers.customers,
+    }),
+  },
   methods: {
+    exportData() {
+      this.$store.dispatch("utils/ExportData", {
+        data: this.customers,
+        sheetName: "Customers",
+        fileName: "Customers.xlsx",
+        headers: [
+          "name",
+          "email",
+          "phone",
+          "gender",
+          "street",
+          "street2",
+          "city",
+          "country",
+        ],
+      });
+    },
     openDialog(item) {
       if (item) {
         this.item = JSON.parse(JSON.stringify(item));
-        return this.$refs.customerDialog.open();
+        this.$refs.customerDialog.open();
+        return;
       }
+      this.item = null;
       this.$refs.customerDialog.open();
     },
   },
