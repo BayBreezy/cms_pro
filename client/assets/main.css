@@ -1,0 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+.el {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s;
+}
+
+.page-enter,
+.page-leave-to {
+  opacity: 0;
+  transform: scale(0.99) rotate(0.5deg);
+}
+
+.toasted-container .toasted {
+  font-family: "Poppins";
+}

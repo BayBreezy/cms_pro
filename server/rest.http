@@ -1,0 +1,32 @@
+@url= http://localhost:3001/api/
+
+
+
+POST {{url}}customers HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Sam Cooke",
+    "email": "samcooke@testy.com",
+    "phone": "1234567890",
+    "street": "123 Main St",
+    "city": "New York",
+    "country": "USA"
+}
+
+###
+
+GET {{url}}customers HTTP/1.1
+
+###
+GET {{url}}customers/6293983767f1b7106a202fdc HTTP/1.1
+
+###
+PUT {{url}}customers/62939e15e4b254fe9d1a9d88 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Sam test",
+    "email": "samcooke@testy.com"
+
+}
